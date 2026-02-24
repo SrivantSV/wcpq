@@ -10,7 +10,7 @@ export function AppLayout() {
       <div className="flex flex-1 flex-col overflow-hidden">
         <TopBar />
         <main className="flex-1 overflow-y-auto pb-16 lg:pb-0 min-w-0">
-          <div className="p-4 md:p-6 max-w-[1400px]">
+          <div className="p-4 lg:p-6 w-full">
             <Outlet />
           </div>
         </main>

@@ -33,39 +33,47 @@ export function TopBar() {
     'CQMR';
 
   return (
-    <header className="flex h-14 items-center gap-4 border-b border-neutral-200 bg-white px-4 lg:px-6 shrink-0">
+    <header className="flex h-14 shrink-0 items-center gap-3 border-b border-neutral-200 bg-white px-4 lg:px-6">
+      {/* Mobile menu toggle */}
       <button
         onClick={toggleSidebar}
-        className="lg:hidden rounded-lg p-2 text-neutral-500 hover:bg-neutral-100"
+        className="lg:hidden rounded-lg p-1.5 text-neutral-500 hover:bg-neutral-100"
       >
         <Menu className="h-5 w-5" />
       </button>
 
-      <h1 className="flex-1 text-base font-semibold text-neutral-900">{title}</h1>
+      {/* Page title */}
+      <h1 className="text-[15px] font-semibold text-neutral-900 truncate">{title}</h1>
 
-      <div className="hidden md:flex items-center gap-2">
+      {/* Spacer */}
+      <div className="flex-1" />
+
+      {/* Search */}
+      <div className="hidden md:flex">
         <div className="relative">
-          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-neutral-400" />
+          <Search className="pointer-events-none absolute left-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-neutral-400" />
           <input
             type="text"
             placeholder="Search..."
-            className="h-8 w-56 rounded-lg border border-neutral-200 bg-neutral-50 pl-9 pr-3 text-sm placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-[#1B4F9C] focus:border-[#1B4F9C] focus:bg-white transition-colors"
+            className="h-8 w-48 rounded-lg border border-neutral-200 bg-neutral-50 pl-8 pr-3 text-sm placeholder:text-neutral-400 focus:outline-none focus:ring-1 focus:ring-[#1B4F9C] focus:border-[#1B4F9C] focus:bg-white transition-colors"
           />
         </div>
       </div>
 
-      <button className="relative rounded-lg p-2 text-neutral-500 hover:bg-neutral-100">
-        <Bell className="h-5 w-5" />
-        <span className="absolute top-1 right-1 h-2 w-2 rounded-full bg-red-500" />
+      {/* Bell */}
+      <button className="relative flex h-8 w-8 items-center justify-center rounded-lg text-neutral-500 hover:bg-neutral-100">
+        <Bell className="h-4 w-4" />
+        <span className="absolute top-1.5 right-1.5 h-1.5 w-1.5 rounded-full bg-red-500" />
       </button>
 
+      {/* User */}
       <div className="flex items-center gap-2">
-        <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[#1B4F9C] text-xs font-bold text-white">
+        <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#1B4F9C] text-xs font-bold text-white">
           {user?.name.charAt(0).toUpperCase() ?? 'U'}
         </div>
-        <div className="hidden md:block">
-          <p className="text-xs font-medium text-neutral-900 leading-tight">{user?.name}</p>
-          <p className="text-[10px] text-neutral-500 capitalize">{user?.role}</p>
+        <div className="hidden lg:block">
+          <p className="text-xs font-semibold text-neutral-900 leading-tight">{user?.name}</p>
+          <p className="text-[10px] text-neutral-400 capitalize">{user?.role}</p>
         </div>
       </div>
     </header>

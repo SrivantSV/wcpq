@@ -26,33 +26,31 @@ export function DashboardPage() {
   return (
     <div className="space-y-5">
       {/* Stat Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         {STAT_CARDS.map((card) => {
           const Icon = card.icon;
           const TrendIcon = card.trend === 'up' ? TrendingUp : card.trend === 'down' ? TrendingDown : null;
           const trendColor = card.trend === 'up' ? 'text-green-600' : card.trend === 'down' ? 'text-blue-600' : 'text-amber-600';
           return (
-            <div key={card.label} className="rounded-xl border border-neutral-200 bg-white p-5 flex flex-col gap-3">
-              <div className="flex items-center justify-between">
-                <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ${card.iconBg}`}>
-                  <Icon className={`h-5 w-5 ${card.iconColor}`} />
+            <div key={card.label} className="rounded-xl border border-neutral-200 bg-white p-4">
+              <div className="flex items-start justify-between mb-2">
+                <div className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-lg ${card.iconBg}`}>
+                  <Icon className={`h-4 w-4 ${card.iconColor}`} />
                 </div>
-                {TrendIcon && <TrendIcon className={`h-4 w-4 ${trendColor}`} />}
+                {TrendIcon && <TrendIcon className={`h-3.5 w-3.5 mt-1 ${trendColor}`} />}
               </div>
-              <div>
-                <p className="text-2xl font-bold text-neutral-900 leading-tight">{card.value}</p>
-                <p className="text-xs font-medium text-neutral-500 mt-0.5">{card.label}</p>
-              </div>
-              <p className={`text-xs font-medium ${trendColor}`}>{card.change}</p>
+              <p className="text-xl font-bold text-neutral-900 leading-tight">{card.value}</p>
+              <p className="text-xs text-neutral-500 mt-0.5 leading-tight">{card.label}</p>
+              <p className={`text-xs font-medium mt-1.5 ${trendColor}`}>{card.change}</p>
             </div>
           );
         })}
       </div>
 
       {/* Main content grid */}
-      <div className="grid grid-cols-1 xl:grid-cols-3 gap-5">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
         {/* Recent Job Orders */}
-        <div className="xl:col-span-2 rounded-xl border border-neutral-200 bg-white overflow-hidden">
+        <div className="lg:col-span-2 rounded-xl border border-neutral-200 bg-white overflow-hidden">
           <div className="flex items-center justify-between px-5 py-3.5 border-b border-neutral-100">
             <h2 className="text-sm font-semibold text-neutral-900">Recent Job Orders</h2>
             <button className="flex items-center gap-1 text-xs text-[#1B4F9C] font-medium hover:underline">
