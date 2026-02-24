@@ -1,4 +1,4 @@
-import { TrendingUp, TrendingDown, FileText, CheckSquare, DollarSign, Clock, ArrowRight } from 'lucide-react';
+import { TrendingUp, TrendingDown, FileText, CheckSquare, DollarSign, Clock, ArrowRight, Plus, Send, BarChart2, Users } from 'lucide-react';
 import { StatusBadge } from '@/components/ui/Badge';
 
 const STAT_CARDS = [
@@ -35,16 +35,16 @@ export function DashboardPage() {
             card.trend === 'up' ? 'text-emerald-600' :
             card.trend === 'down' ? 'text-blue-600' : 'text-amber-500';
           return (
-            <div key={card.label} className="rounded-xl border border-neutral-200 bg-white shadow-sm p-4 flex flex-col gap-3">
-              {/* Top row: label + icon */}
-              <div className="flex items-center justify-between">
-                <p className="text-xs font-medium text-neutral-500">{card.label}</p>
-                <div className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-lg ${card.iconBg}`}>
-                  <Icon className={`h-4 w-4 ${card.iconColor}`} />
+            <div key={card.label} className="rounded-xl border border-neutral-200 bg-white shadow-sm p-4">
+              {/* Icon + label row */}
+              <div className="flex items-center gap-2 mb-3">
+                <div className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-md ${card.iconBg}`}>
+                  <Icon className={`h-3.5 w-3.5 ${card.iconColor}`} />
                 </div>
+                <p className="text-xs font-medium text-neutral-500 truncate">{card.label}</p>
               </div>
               {/* Value */}
-              <p className="text-2xl font-bold text-neutral-900 leading-none">{card.value}</p>
+              <p className="text-2xl font-bold text-neutral-900 leading-none mb-2">{card.value}</p>
               {/* Trend */}
               <div className={`flex items-center gap-1 text-xs font-medium ${trendColor}`}>
                 {TrendIcon && <TrendIcon className="h-3.5 w-3.5" />}
@@ -88,7 +88,7 @@ export function DashboardPage() {
         </div>
 
         {/* Pending Approvals */}
-        <div className="lg:col-span-2 rounded-xl border border-neutral-200 bg-white shadow-sm flex flex-col overflow-hidden">
+        <div className="lg:col-span-2 rounded-xl border border-neutral-200 bg-white shadow-sm flex flex-col">
           <div className="flex items-center justify-between px-5 py-3.5 border-b border-neutral-100">
             <h2 className="text-sm font-semibold text-neutral-900">Pending Approvals</h2>
             <span className="inline-flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-[11px] font-bold text-white">
@@ -116,6 +116,58 @@ export function DashboardPage() {
             <button className="w-full rounded-lg bg-[#1B4F9C] py-2 text-sm font-semibold text-white hover:bg-[#174287] transition-colors">
               Review All Approvals
             </button>
+          </div>
+        </div>
+
+      </div>
+
+      {/* Bottom row — Quick Actions + Activity */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+
+        {/* Quick Actions */}
+        <div className="rounded-xl border border-neutral-200 bg-white shadow-sm p-4">
+          <h2 className="text-sm font-semibold text-neutral-900 mb-3">Quick Actions</h2>
+          <div className="grid grid-cols-2 gap-2">
+            {[
+              { label: 'New Job Order', icon: Plus, color: 'text-blue-600', bg: 'bg-blue-50' },
+              { label: 'Submit for Approval', icon: Send, color: 'text-amber-600', bg: 'bg-amber-50' },
+              { label: 'View Reports', icon: BarChart2, color: 'text-emerald-600', bg: 'bg-emerald-50' },
+              { label: 'Manage Staff', icon: Users, color: 'text-violet-600', bg: 'bg-violet-50' },
+            ].map((action) => {
+              const Icon = action.icon;
+              return (
+                <button key={action.label} className="flex items-center gap-2.5 rounded-lg border border-neutral-100 p-3 text-left hover:bg-neutral-50 hover:border-neutral-200 transition-colors">
+                  <div className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-md ${action.bg}`}>
+                    <Icon className={`h-3.5 w-3.5 ${action.color}`} />
+                  </div>
+                  <span className="text-xs font-medium text-neutral-700 leading-tight">{action.label}</span>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Recent Activity */}
+        <div className="lg:col-span-2 rounded-xl border border-neutral-200 bg-white shadow-sm overflow-hidden">
+          <div className="flex items-center justify-between px-5 py-3.5 border-b border-neutral-100">
+            <h2 className="text-sm font-semibold text-neutral-900">Recent Activity</h2>
+          </div>
+          <div className="divide-y divide-neutral-100">
+            {[
+              { user: 'Raj Kumar', action: 'submitted JO-2024-0081 for approval', time: '1h ago', color: 'bg-blue-500' },
+              { user: 'Meena Shah', action: 'updated cost estimate on JO-2024-0076', time: '3h ago', color: 'bg-amber-500' },
+              { user: 'Arjun Nair', action: 'marked JO-2024-0074 as In Progress', time: '5h ago', color: 'bg-emerald-500' },
+              { user: 'Admin User', action: 'approved JO-2024-0080 (Electrical Fittings)', time: '1d ago', color: 'bg-violet-500' },
+            ].map((item, i) => (
+              <div key={i} className="grid grid-cols-[auto_1fr_auto] items-start gap-3 px-5 py-3">
+                <div className={`mt-1.5 h-2 w-2 shrink-0 rounded-full ${item.color}`} />
+                <p className="text-sm text-neutral-800 min-w-0">
+                  <span className="font-semibold">{item.user}</span>{' '}
+                  <span className="text-neutral-500">{item.action}</span>
+                </p>
+                <span className="text-xs text-neutral-400 whitespace-nowrap">{item.time}</span>
+              </div>
+            ))}
           </div>
         </div>
 

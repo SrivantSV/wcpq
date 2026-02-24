@@ -50,7 +50,7 @@ export function TopBar() {
 
       {/* Search */}
       <div className="hidden md:flex">
-        <div className="relative">
+        <div className="relative h-8">
           <Search className="pointer-events-none absolute left-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-neutral-400" />
           <input
             type="text"

@@ -39,7 +39,7 @@ export function Sidebar() {
   return (
     <aside
       className={cn(
-        'hidden lg:flex flex-col h-full bg-[#1B4F9C] text-white transition-all duration-200 ease-in-out relative shrink-0',
+        'hidden lg:flex flex-col h-full bg-[#1B4F9C] text-white transition-all duration-200 ease-in-out relative shrink-0 overflow-hidden',
         sidebarCollapsed ? 'w-[64px]' : 'w-[220px]'
       )}
     >
@@ -82,7 +82,7 @@ export function Sidebar() {
                 <>
                   <span className="flex-1 truncate">{item.label}</span>
                   {item.badge && (
-                    <span className="inline-flex h-5 min-w-[20px] items-center justify-center rounded-full bg-red-500 px-1.5 text-[11px] font-bold">
+                    <span className="inline-flex h-4 min-w-[16px] items-center justify-center rounded-full bg-red-500 px-1 text-[10px] font-bold text-white">
                       {item.badge}
                     </span>
                   )}
