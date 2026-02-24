@@ -127,7 +127,7 @@ export function Sidebar() {
       {/* Collapse toggle */}
       <button
         onClick={toggleCollapsed}
-        className="absolute -right-3 top-20 flex h-6 w-6 items-center justify-center rounded-full border border-neutral-200 bg-white text-neutral-600 shadow-sm hover:bg-neutral-50 z-10"
+        className="absolute right-2 top-[72px] flex h-5 w-5 items-center justify-center rounded-md bg-white/20 text-white/70 hover:bg-white/30 hover:text-white transition-colors z-10"
       >
         {sidebarCollapsed ? (
           <ChevronRight className="h-3.5 w-3.5" />

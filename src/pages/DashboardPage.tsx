@@ -1,11 +1,11 @@
-import { TrendingUp, TrendingDown, FileText, CheckSquare, DollarSign, Clock, AlertCircle, ArrowRight } from 'lucide-react';
+import { TrendingUp, TrendingDown, FileText, CheckSquare, DollarSign, Clock, ArrowRight } from 'lucide-react';
 import { StatusBadge } from '@/components/ui/Badge';
 
 const STAT_CARDS = [
-  { label: 'Active Job Orders', value: '24', change: '+3 this week', trend: 'up', icon: FileText, iconBg: 'bg-blue-50', iconColor: 'text-blue-600' },
-  { label: 'Pending Approvals', value: '7', change: '2 urgent', trend: 'neutral', icon: CheckSquare, iconBg: 'bg-amber-50', iconColor: 'text-amber-600' },
-  { label: 'Revenue This Month', value: '₹18.4L', change: '+12% vs last month', trend: 'up', icon: DollarSign, iconBg: 'bg-green-50', iconColor: 'text-green-600' },
-  { label: 'Avg. Turnaround', value: '4.2 days', change: '−0.5 days improved', trend: 'down', icon: Clock, iconBg: 'bg-purple-50', iconColor: 'text-purple-600' },
+  { label: 'Active Job Orders', value: '24', change: '+3 this week', trend: 'up' as const, icon: FileText, iconBg: 'bg-blue-100', iconColor: 'text-blue-600' },
+  { label: 'Pending Approvals', value: '7', change: '2 urgent', trend: 'neutral' as const, icon: CheckSquare, iconBg: 'bg-amber-100', iconColor: 'text-amber-600' },
+  { label: 'Revenue This Month', value: '₹18.4L', change: '+12% vs last month', trend: 'up' as const, icon: DollarSign, iconBg: 'bg-emerald-100', iconColor: 'text-emerald-600' },
+  { label: 'Avg. Turnaround', value: '4.2 days', change: '−0.5 days improved', trend: 'down' as const, icon: Clock, iconBg: 'bg-violet-100', iconColor: 'text-violet-600' },
 ];
 
 const RECENT_JOBS = [
@@ -22,98 +22,106 @@ const PENDING_APPROVALS = [
   { id: 'JO-2024-0074', title: 'Security System Upgrade', submittedBy: 'Arjun Nair', urgency: 'low', daysAgo: 5 },
 ];
 
+function TrendIndicator({ trend, change }: { trend: string; change: string }) {
+  const Icon = trend === 'up' ? TrendingUp : trend === 'down' ? TrendingDown : null;
+  const color = trend === 'up' ? 'text-emerald-600' : trend === 'down' ? 'text-blue-600' : 'text-amber-600';
+  return (
+    <span className={`inline-flex items-center gap-1 text-[11px] font-semibold ${color}`}>
+      {Icon && <Icon className="h-3 w-3" />}
+      {change}
+    </span>
+  );
+}
+
 export function DashboardPage() {
   return (
-    <div className="space-y-5">
-      {/* Stat Cards */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+    <div className="space-y-6">
+      {/* Stat Cards — horizontal layout: icon left, stats right */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
         {STAT_CARDS.map((card) => {
           const Icon = card.icon;
-          const TrendIcon = card.trend === 'up' ? TrendingUp : card.trend === 'down' ? TrendingDown : null;
-          const trendColor = card.trend === 'up' ? 'text-green-600' : card.trend === 'down' ? 'text-blue-600' : 'text-amber-600';
           return (
-            <div key={card.label} className="rounded-xl border border-neutral-200 bg-white p-4">
-              <div className="flex items-start justify-between mb-2">
-                <div className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-lg ${card.iconBg}`}>
-                  <Icon className={`h-4 w-4 ${card.iconColor}`} />
-                </div>
-                {TrendIcon && <TrendIcon className={`h-3.5 w-3.5 mt-1 ${trendColor}`} />}
+            <div
+              key={card.label}
+              className="flex items-center gap-3 rounded-xl border border-neutral-200 bg-white px-4 py-3.5"
+            >
+              <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-lg ${card.iconBg}`}>
+                <Icon className={`h-5 w-5 ${card.iconColor}`} />
               </div>
-              <p className="text-xl font-bold text-neutral-900 leading-tight">{card.value}</p>
-              <p className="text-xs text-neutral-500 mt-0.5 leading-tight">{card.label}</p>
-              <p className={`text-xs font-medium mt-1.5 ${trendColor}`}>{card.change}</p>
+              <div className="min-w-0">
+                <p className="text-[11px] font-medium text-neutral-500 uppercase tracking-wide truncate">{card.label}</p>
+                <p className="text-lg font-bold text-neutral-900 leading-tight">{card.value}</p>
+                <TrendIndicator trend={card.trend} change={card.change} />
+              </div>
             </div>
           );
         })}
       </div>
 
-      {/* Main content grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
-        {/* Recent Job Orders */}
-        <div className="lg:col-span-2 rounded-xl border border-neutral-200 bg-white overflow-hidden">
-          <div className="flex items-center justify-between px-5 py-3.5 border-b border-neutral-100">
-            <h2 className="text-sm font-semibold text-neutral-900">Recent Job Orders</h2>
-            <button className="flex items-center gap-1 text-xs text-[#1B4F9C] font-medium hover:underline">
+      {/* Main content — 2/3 + 1/3 split */}
+      <div className="grid grid-cols-1 lg:grid-cols-5 gap-4">
+        {/* Recent Job Orders — takes 3 of 5 cols */}
+        <div className="lg:col-span-3 rounded-xl border border-neutral-200 bg-white">
+          <div className="flex items-center justify-between px-4 py-3 border-b border-neutral-100">
+            <h2 className="text-[13px] font-semibold text-neutral-900">Recent Job Orders</h2>
+            <button className="flex items-center gap-1 text-xs text-[#1B4F9C] font-semibold hover:underline">
               View all <ArrowRight className="h-3 w-3" />
             </button>
           </div>
-          <div className="divide-y divide-neutral-100">
+          <div className="divide-y divide-neutral-50">
             {RECENT_JOBS.map((job) => (
               <div
                 key={job.id}
-                className="flex items-start gap-3 px-5 py-3.5 hover:bg-neutral-50 transition-colors cursor-pointer"
+                className="flex items-center justify-between px-4 py-2.5 hover:bg-neutral-50/60 transition-colors cursor-pointer"
               >
-                <div className="min-w-0 flex-1">
-                  <div className="flex items-center gap-2 mb-0.5 flex-wrap">
-                    <p className="text-sm font-semibold text-neutral-900">{job.title}</p>
+                <div className="min-w-0 flex-1 mr-4">
+                  <div className="flex items-center gap-2">
+                    <span className="text-[13px] font-semibold text-neutral-900 truncate">{job.title}</span>
                     <StatusBadge status={job.status} />
                   </div>
-                  <p className="text-xs text-neutral-500">
-                    <span className="font-mono">{job.id}</span> · {job.client} · {job.date}
+                  <p className="text-[11px] text-neutral-400 mt-0.5">
+                    <span className="font-mono">{job.id}</span>
+                    <span className="mx-1">·</span>{job.client}<span className="mx-1">·</span>{job.date}
                   </p>
                 </div>
-                <div className="shrink-0 text-right pt-0.5">
-                  <p className="text-sm font-bold text-neutral-900">{job.value}</p>
-                </div>
+                <span className="text-[13px] font-bold text-neutral-800 tabular-nums shrink-0">{job.value}</span>
               </div>
             ))}
           </div>
         </div>
 
-        {/* Pending Approvals */}
-        <div className="rounded-xl border border-neutral-200 bg-white overflow-hidden flex flex-col">
-          <div className="flex items-center justify-between px-5 py-3.5 border-b border-neutral-100">
-            <h2 className="text-sm font-semibold text-neutral-900">Pending Approvals</h2>
-            <span className="inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-red-500 px-1.5 text-xs font-bold text-white">
+        {/* Pending Approvals — takes 2 of 5 cols */}
+        <div className="lg:col-span-2 rounded-xl border border-neutral-200 bg-white flex flex-col">
+          <div className="flex items-center justify-between px-4 py-3 border-b border-neutral-100">
+            <h2 className="text-[13px] font-semibold text-neutral-900">Pending Approvals</h2>
+            <span className="inline-flex h-5 min-w-[20px] items-center justify-center rounded-full bg-red-500 px-1.5 text-[11px] font-bold text-white">
               {PENDING_APPROVALS.length}
             </span>
           </div>
-          <div className="divide-y divide-neutral-100 flex-1">
+          <div className="divide-y divide-neutral-50 flex-1">
             {PENDING_APPROVALS.map((item) => (
-              <div key={item.id} className="px-5 py-4 hover:bg-neutral-50 transition-colors cursor-pointer">
-                <div className="flex items-start gap-2.5">
-                  <AlertCircle
-                    className={`h-4 w-4 mt-0.5 shrink-0 ${
-                      item.urgency === 'high'
-                        ? 'text-red-500'
-                        : item.urgency === 'medium'
-                        ? 'text-amber-500'
-                        : 'text-green-500'
-                    }`}
-                  />
-                  <div className="min-w-0">
-                    <p className="text-sm font-semibold text-neutral-900 leading-tight">{item.title}</p>
-                    <p className="text-xs text-neutral-400 font-mono mt-0.5">{item.id}</p>
-                    <p className="text-xs text-neutral-500 mt-1">
-                      By {item.submittedBy} · {item.daysAgo}d ago
-                    </p>
-                  </div>
+              <div key={item.id} className="flex items-start gap-2.5 px-4 py-3 hover:bg-neutral-50/60 transition-colors cursor-pointer">
+                <span
+                  className={`mt-0.5 h-2 w-2 shrink-0 rounded-full ${
+                    item.urgency === 'high'
+                      ? 'bg-red-500'
+                      : item.urgency === 'medium'
+                      ? 'bg-amber-400'
+                      : 'bg-emerald-400'
+                  }`}
+                />
+                <div className="min-w-0">
+                  <p className="text-[13px] font-semibold text-neutral-900 leading-snug">{item.title}</p>
+                  <p className="text-[11px] text-neutral-400 mt-0.5">
+                    <span className="font-mono">{item.id}</span>
+                    <span className="mx-1">·</span>By {item.submittedBy}<span className="mx-1">·</span>{item.daysAgo}d ago
+                  </p>
                 </div>
               </div>
             ))}
           </div>
-          <div className="px-5 py-3.5 border-t border-neutral-100">
-            <button className="w-full rounded-lg bg-[#1B4F9C] py-2 text-sm font-medium text-white hover:bg-[#174287] transition-colors">
+          <div className="px-4 py-3 border-t border-neutral-100">
+            <button className="w-full rounded-lg bg-[#1B4F9C] py-2 text-[13px] font-semibold text-white hover:bg-[#174287] transition-colors">
               Review All Approvals
             </button>
           </div>
