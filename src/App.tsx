@@ -6,6 +6,7 @@ import { useAuthStore } from '@/stores/authStore';
 
 import { LoginPage } from '@/pages/auth/LoginPage';
 import { DashboardPage } from '@/pages/DashboardPage';
+import { JobOrdersPage } from '@/pages/job-orders/JobOrdersPage';
 import { PlaceholderPage } from '@/pages/PlaceholderPage';
 
 import { SettingsLayout } from '@/pages/settings/SettingsLayout';
@@ -50,7 +51,7 @@ function App() {
           >
             <Route index element={<Navigate to="/dashboard" replace />} />
             <Route path="dashboard" element={<DashboardPage />} />
-            <Route path="job-orders" element={<PlaceholderPage title="Job Orders" description="Create and manage job orders, assign clients, and track progress." />} />
+            <Route path="job-orders" element={<JobOrdersPage />} />
             <Route path="approvals" element={<PlaceholderPage title="Approvals" description="Review and approve/reject pending job orders and estimates." />} />
             <Route path="execution" element={<PlaceholderPage title="Execution" description="Track site execution, progress updates, and BOQ actuals." />} />
             <Route path="finance" element={<PlaceholderPage title="Finance & Invoices" description="Generate invoices, record payments, and track receivables." />} />

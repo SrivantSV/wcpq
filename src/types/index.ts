@@ -173,6 +173,55 @@ export type BadgeStatus =
   | 'cancelled'
   | 'on_hold';
 
+export type JobOrderStatus = BadgeStatus;
+
+export type JobPriority = 'low' | 'normal' | 'high' | 'urgent';
+
+export type JobType =
+  | 'civil'
+  | 'electrical'
+  | 'plumbing'
+  | 'hvac'
+  | 'painting'
+  | 'carpentry'
+  | 'it_infrastructure'
+  | 'security'
+  | 'landscaping'
+  | 'other';
+
+export interface JobOrderAttachment {
+  id: string;
+  name: string;
+  size: number;
+  type: string;
+  url: string;
+  uploadedAt: string;
+}
+
+export interface JobOrder {
+  id: string;
+  jobNumber: string;
+  title: string;
+  clientId: string;
+  clientName: string;
+  clientContact: string;
+  clientEmail: string;
+  clientPhone: string;
+  jobType: JobType;
+  priority: JobPriority;
+  status: JobOrderStatus;
+  startDate: string;
+  expectedCompletion: string;
+  deliveryTerms?: string;
+  internalNotes?: string;
+  clientInstructions?: string;
+  estimatedTotal?: number;
+  attachments: JobOrderAttachment[];
+  createdBy: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
 export interface Permission {
   resource: string;
   actions: ('create' | 'read' | 'update' | 'delete' | 'approve')[];
