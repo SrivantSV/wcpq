@@ -14,15 +14,15 @@ const SEED: ExecutionRecord[] = [
     estimateId: 'est_j4',
     status: 'in_progress',
     materialIssuances: [
-      { id: 'mi1', materialId: 'mat1', description: 'R-22 Refrigerant Gas', unit: 'Kg', estimatedQty: 20, issuedQty: 12, issueDate: '2025-01-25', issuedBy: 'Ravi Kumar', vendorRef: 'RefrigEx', referenceNo: 'REF-001' },
-      { id: 'mi2', materialId: 'mat2', description: 'HVAC Duct Cleaner Solution', unit: 'Ltr', estimatedQty: 50, issuedQty: 30, issueDate: '2025-01-26', issuedBy: 'Ravi Kumar', referenceNo: 'REF-002' },
+      { id: 'mi1', materialId: 'mat1', description: 'VCI Poly Bags (Heavy Duty)', unit: 'Nos', estimatedQty: 500, issuedQty: 380, issueDate: '2025-01-25', issuedBy: 'Ravi Kumar', vendorRef: 'PackTech India', referenceNo: 'REF-001' },
+      { id: 'mi2', materialId: 'mat2', description: 'Silica Gel Desiccant Packs (500g)', unit: 'Nos', estimatedQty: 200, issuedQty: 160, issueDate: '2025-01-26', issuedBy: 'Ravi Kumar', referenceNo: 'REF-002' },
     ],
     laborLogs: [
-      { id: 'll1', laborId: 'lab1', taskDescription: 'HVAC Unit Servicing', estimatedHours: 80, loggedHours: 48, dateWorked: '2025-01-25', worker: 'Ravi Kumar', workDescription: 'Compressor & coil cleaning', referenceNo: 'WO-001' },
-      { id: 'll2', laborId: 'lab2', taskDescription: 'Duct Cleaning & Sanitization', estimatedHours: 60, loggedHours: 36, dateWorked: '2025-01-26', worker: 'Suresh B', workDescription: 'All floor ducts cleaned', referenceNo: 'WO-002' },
+      { id: 'll1', laborId: 'lab1', taskDescription: 'VCI Bag Packing & Sealing', estimatedHours: 80, loggedHours: 52, dateWorked: '2025-01-25', worker: 'Ravi Kumar', workDescription: 'Packed and heat-sealed VCI bags for precision parts', referenceNo: 'WO-001' },
+      { id: 'll2', laborId: 'lab2', taskDescription: 'Humidity Indicator Card Insertion & Labelling', estimatedHours: 40, loggedHours: 28, dateWorked: '2025-01-26', worker: 'Suresh B', workDescription: 'Inserted desiccants and humidity cards; applied batch labels', referenceNo: 'WO-002' },
     ],
     overheadActuals: [
-      { id: 'oa1', overheadId: 'ovh1', description: 'Site Transport', estimatedAmount: 8000, actualAmount: 5500, date: '2025-01-27', referenceNotes: 'Vehicle hire - 2 days' },
+      { id: 'oa1', overheadId: 'ovh1', description: 'Packaging Line Setup & Tooling', estimatedAmount: 8000, actualAmount: 6200, date: '2025-01-27', referenceNotes: 'Sealing machine calibration and line setup for VCI run' },
     ],
     revisionRequests: [],
     createdAt: '2025-01-20T09:00:00Z',

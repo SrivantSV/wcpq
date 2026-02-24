@@ -34,7 +34,7 @@ const EMPTY_FORM: FormState = {
   clientContact: '',
   clientEmail: '',
   clientPhone: '',
-  jobType: 'civil',
+  jobType: 'corrugated_cardboard',
   priority: 'normal',
   startDate: '',
   expectedCompletion: '',

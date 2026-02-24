@@ -99,7 +99,7 @@ const SEED_INVOICES: Invoice[] = [
     billToGstin: '29AAACT0000A1Z5',
     currency: 'INR',
     lineMode: 'summary',
-    lineItems: [{ id: 'li5', description: 'Electrical Fittings & Panel Upgrade — JO-2025-0080', amount: 185000 }],
+    lineItems: [{ id: 'li5', description: 'Wooden Crates & Pallets — Generator Set Export — JO-2025-0080', amount: 185000 }],
     subTotal: 185000,
     taxConfig: DEFAULT_TAX,
     cgstAmount: 16650, sgstAmount: 16650, igstAmount: 0, additionalLevyAmount: 0,

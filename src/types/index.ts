@@ -178,16 +178,10 @@ export type JobOrderStatus = BadgeStatus;
 export type JobPriority = 'low' | 'normal' | 'high' | 'urgent';
 
 export type JobType =
-  | 'civil'
-  | 'electrical'
-  | 'plumbing'
-  | 'hvac'
-  | 'painting'
-  | 'carpentry'
-  | 'it_infrastructure'
-  | 'security'
-  | 'landscaping'
-  | 'other';
+  | 'corrugated_cardboard'
+  | 'wooden_crates'
+  | 'metal_packaging'
+  | 'specialty_materials';
 
 export interface JobOrderAttachment {
   id: string;
