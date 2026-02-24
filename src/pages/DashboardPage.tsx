@@ -1,176 +1,182 @@
-import { TrendingUp, TrendingDown, FileText, CheckSquare, DollarSign, Clock, ArrowRight, Plus, Send, BarChart2, Users } from 'lucide-react';
-import { StatusBadge } from '@/components/ui/Badge';
+import { useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
+import {
+  TrendingUp, TrendingDown, Minus, AlertTriangle, CheckCircle2,
+  Briefcase, ReceiptText, TrendingUp as TUp, DollarSign, Clock,
+} from 'lucide-react';
+import {
+  LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid,
+  Tooltip, Legend, ResponsiveContainer, PieChart, Pie, Cell,
+} from 'recharts';
+import { cn } from '@/lib/utils';
+import { formatCurrency } from '@/lib/utils';
+import { useReportsStore } from '@/stores/reportsStore';
 
-const STAT_CARDS = [
-  { label: 'Active Job Orders', value: '24', change: '+3 this week', trend: 'up' as const, icon: FileText, iconBg: 'bg-blue-100', iconColor: 'text-blue-600' },
-  { label: 'Pending Approvals', value: '7', change: '2 urgent', trend: 'neutral' as const, icon: CheckSquare, iconBg: 'bg-amber-100', iconColor: 'text-amber-600' },
-  { label: 'Revenue This Month', value: '₹18.4L', change: '+12% vs last month', trend: 'up' as const, icon: DollarSign, iconBg: 'bg-emerald-100', iconColor: 'text-emerald-600' },
-  { label: 'Avg. Turnaround', value: '4.2 days', change: '−0.5 days improved', trend: 'down' as const, icon: Clock, iconBg: 'bg-violet-100', iconColor: 'text-violet-600' },
-];
+const DONUT_COLORS = ['#1B4F9C','#3b82f6','#6366f1','#8b5cf6','#ec4899'];
+const STATUS_COLORS: Record<string, string> = {
+  pending: '#f59e0b', in_progress: '#3b82f6', on_hold: '#f97316',
+  completed: '#10b981', cancelled: '#6b7280',
+};
 
-const RECENT_JOBS = [
-  { id: 'JO-2024-0081', client: 'Infosys Ltd', title: 'Civil Works Block B', value: '₹4,20,000', status: 'pending' as const, date: '22 Feb 2025' },
-  { id: 'JO-2024-0080', client: 'TCS Bangalore', title: 'Electrical Fittings', value: '₹1,85,000', status: 'approved' as const, date: '21 Feb 2025' },
-  { id: 'JO-2024-0079', client: 'Wipro Campus', title: 'Plumbing Overhaul', value: '₹3,10,000', status: 'in_progress' as const, date: '20 Feb 2025' },
-  { id: 'JO-2024-0078', client: 'HCL Tech Park', title: 'HVAC Maintenance', value: '₹2,60,000', status: 'completed' as const, date: '19 Feb 2025' },
-  { id: 'JO-2024-0077', client: 'Cognizant SEZ', title: 'Painting & Finishing', value: '₹95,000', status: 'draft' as const, date: '18 Feb 2025' },
-];
-
-const PENDING_APPROVALS = [
-  { id: 'JO-2024-0081', title: 'Civil Works Block B', submittedBy: 'Raj Kumar', urgency: 'high', daysAgo: 1 },
-  { id: 'JO-2024-0076', title: 'Generator Installation', submittedBy: 'Meena Shah', urgency: 'medium', daysAgo: 3 },
-  { id: 'JO-2024-0074', title: 'Security System Upgrade', submittedBy: 'Arjun Nair', urgency: 'low', daysAgo: 5 },
-];
+function KpiCard({ label, value, sub, trend, icon: Icon, accent }: {
+  label: string; value: string; sub: string;
+  trend?: 'up' | 'down' | 'neutral'; icon: React.ElementType; accent: string;
+}) {
+  const TIcon = trend === 'up' ? TrendingUp : trend === 'down' ? TrendingDown : Minus;
+  const tColor = trend === 'up' ? 'text-emerald-600' : trend === 'down' ? 'text-red-500' : 'text-neutral-400';
+  return (
+    <div className="rounded-xl border border-neutral-200 bg-white shadow-sm px-5 py-4 flex items-start gap-4">
+      <div className={cn('flex h-10 w-10 shrink-0 items-center justify-center rounded-xl', accent)}>
+        <Icon className="h-5 w-5" />
+      </div>
+      <div className="min-w-0 flex-1">
+        <p className="text-xs font-semibold text-neutral-500 mb-0.5">{label}</p>
+        <p className="text-xl font-bold text-neutral-900 tabular-nums truncate">{value}</p>
+        <div className={cn('flex items-center gap-1 text-xs font-medium mt-0.5', tColor)}>
+          <TIcon className="h-3 w-3" />
+          <span>{sub}</span>
+        </div>
+      </div>
+    </div>
+  );
+}
 
 export function DashboardPage() {
+  const navigate = useNavigate();
+  const { getKpis, getCostTrend, getPipeline, getTopOverBudget, getRevenueByClient, getCostSplit } = useReportsStore();
+
+  const kpis = useMemo(() => getKpis(), []);
+  const costTrend = useMemo(() => getCostTrend(), []);
+  const pipeline = useMemo(() => getPipeline(), []);
+  const overBudget = useMemo(() => getTopOverBudget(), []);
+  const revenue = useMemo(() => getRevenueByClient(), []);
+  const costSplit = useMemo(() => getCostSplit(), []);
+
+  const estDelta = kpis.totalEstimatedValueLastMonth > 0
+    ? ((kpis.totalEstimatedValue - kpis.totalEstimatedValueLastMonth) / kpis.totalEstimatedValueLastMonth * 100).toFixed(1)
+    : '0';
+  const invDelta = kpis.invoicedLastMonth > 0
+    ? ((kpis.invoicedThisMonth - kpis.invoicedLastMonth) / kpis.invoicedLastMonth * 100).toFixed(1)
+    : '0';
+  const actualVariancePct = kpis.totalEstimatedCostForActuals > 0
+    ? ((kpis.totalActualCost - kpis.totalEstimatedCostForActuals) / kpis.totalEstimatedCostForActuals * 100).toFixed(1)
+    : '0';
+
   return (
-    <div className="space-y-5">
+    <div className="space-y-6">
+      {/* KPI Row */}
+      <div className="grid grid-cols-2 gap-3 lg:grid-cols-3 xl:grid-cols-6">
+        <KpiCard label="Active Jobs" value={String(kpis.activeJobs)} sub={`${kpis.overBudgetJobs} over budget`} trend={kpis.overBudgetJobs > 0 ? 'down' : 'up'} icon={Briefcase} accent="bg-blue-50 text-blue-600" />
+        <KpiCard label="Total Est. Value" value={formatCurrency(kpis.totalEstimatedValue)} sub={`${Number(estDelta) >= 0 ? '+' : ''}${estDelta}% vs last month`} trend={Number(estDelta) >= 0 ? 'up' : 'down'} icon={TUp} accent="bg-violet-50 text-violet-600" />
+        <KpiCard label="Total Actual Cost" value={formatCurrency(kpis.totalActualCost)} sub={`${Number(actualVariancePct) >= 0 ? '+' : ''}${actualVariancePct}% vs estimate`} trend={Number(actualVariancePct) > 5 ? 'down' : 'neutral'} icon={DollarSign} accent="bg-amber-50 text-amber-600" />
+        <KpiCard label="Invoiced This Month" value={formatCurrency(kpis.invoicedThisMonth)} sub={`${Number(invDelta) >= 0 ? '+' : ''}${invDelta}% vs last month`} trend={Number(invDelta) >= 0 ? 'up' : 'down'} icon={ReceiptText} accent="bg-emerald-50 text-emerald-600" />
+        <KpiCard label="Outstanding" value={formatCurrency(kpis.outstandingReceivables)} sub={`${kpis.overdueCount} overdue`} trend={kpis.overdueCount > 0 ? 'down' : 'neutral'} icon={AlertTriangle} accent={kpis.overdueCount > 0 ? 'bg-red-50 text-red-500' : 'bg-neutral-100 text-neutral-500'} />
+        <KpiCard label="Completed MTD" value={String(kpis.completedMTD)} sub={`Target: ${kpis.completedMTDTarget}`} trend={kpis.completedMTD >= kpis.completedMTDTarget ? 'up' : 'neutral'} icon={CheckCircle2} accent="bg-teal-50 text-teal-600" />
+      </div>
 
-      {/* Stat Cards — vertical layout, icon top-right, value prominent */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        {STAT_CARDS.map((card) => {
-          const Icon = card.icon;
-          const TrendIcon = card.trend === 'up' ? TrendingUp : card.trend === 'down' ? TrendingDown : null;
-          const trendColor =
-            card.trend === 'up' ? 'text-emerald-600' :
-            card.trend === 'down' ? 'text-blue-600' : 'text-amber-500';
-          return (
-            <div key={card.label} className="rounded-xl border border-neutral-200 bg-white shadow-sm p-4">
-              {/* Icon + label row */}
-              <div className="flex items-center gap-2 mb-3">
-                <div className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-md ${card.iconBg}`}>
-                  <Icon className={`h-3.5 w-3.5 ${card.iconColor}`} />
-                </div>
-                <p className="text-xs font-medium text-neutral-500 truncate">{card.label}</p>
-              </div>
-              {/* Value */}
-              <p className="text-2xl font-bold text-neutral-900 leading-none mb-2">{card.value}</p>
-              {/* Trend */}
-              <div className={`flex items-center gap-1 text-xs font-medium ${trendColor}`}>
-                {TrendIcon && <TrendIcon className="h-3.5 w-3.5" />}
-                <span>{card.change}</span>
-              </div>
+      {/* Charts row 1: Cost Trend + Pipeline */}
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
+        <div className="lg:col-span-2 rounded-xl border border-neutral-200 bg-white shadow-sm p-5">
+          <p className="text-sm font-semibold text-neutral-800 mb-4">Cost Trend — Estimated vs Actual (6 months)</p>
+          <ResponsiveContainer width="100%" height={220}>
+            <LineChart data={costTrend} margin={{ top: 4, right: 8, left: 0, bottom: 0 }}>
+              <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+              <XAxis dataKey="month" tick={{ fontSize: 11 }} />
+              <YAxis tick={{ fontSize: 11 }} tickFormatter={(v) => `₹${(v/1000).toFixed(0)}k`} />
+              <Tooltip formatter={(v: number | undefined) => formatCurrency(v ?? 0)} />
+              <Legend wrapperStyle={{ fontSize: 11 }} />
+              <Line type="monotone" dataKey="estimated" stroke="#6366f1" strokeWidth={2} dot={false} name="Estimated" />
+              <Line type="monotone" dataKey="actual" stroke="#f59e0b" strokeWidth={2} dot={false} name="Actual" />
+            </LineChart>
+          </ResponsiveContainer>
+        </div>
+
+        <div className="rounded-xl border border-neutral-200 bg-white shadow-sm p-5">
+          <p className="text-sm font-semibold text-neutral-800 mb-4">Job Status Pipeline</p>
+          <ResponsiveContainer width="100%" height={220}>
+            <BarChart data={pipeline} layout="vertical" margin={{ top: 0, right: 8, left: 32, bottom: 0 }}>
+              <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" horizontal={false} />
+              <XAxis type="number" tick={{ fontSize: 11 }} />
+              <YAxis type="category" dataKey="label" tick={{ fontSize: 11 }} width={76} />
+              <Tooltip />
+              <Bar dataKey="count" name="Jobs" radius={[0, 4, 4, 0]}>
+                {pipeline.map((p) => <Cell key={p.status} fill={STATUS_COLORS[p.status] ?? '#6b7280'} />)}
+              </Bar>
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+      </div>
+
+      {/* Charts row 2: Over Budget + Revenue + Cost Split */}
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
+        {/* Top 5 Over-Budget */}
+        <div className="rounded-xl border border-neutral-200 bg-white shadow-sm p-5">
+          <p className="text-sm font-semibold text-neutral-800 mb-4">Top 5 Over-Budget Jobs</p>
+          {overBudget.length === 0 ? (
+            <div className="flex flex-col items-center justify-center h-40 text-center">
+              <CheckCircle2 className="h-8 w-8 text-emerald-200 mb-2" />
+              <p className="text-xs text-neutral-400 font-medium">All jobs within budget</p>
             </div>
-          );
-        })}
-      </div>
-
-      {/* Main content — 3/5 + 2/5 split */}
-      <div className="grid grid-cols-1 lg:grid-cols-5 gap-4">
-
-        {/* Recent Job Orders */}
-        <div className="lg:col-span-3 rounded-xl border border-neutral-200 bg-white shadow-sm overflow-hidden">
-          <div className="flex items-center justify-between px-5 py-3.5 border-b border-neutral-100">
-            <h2 className="text-sm font-semibold text-neutral-900">Recent Job Orders</h2>
-            <button className="flex items-center gap-1 text-xs font-semibold text-[#1B4F9C] hover:underline">
-              View all <ArrowRight className="h-3 w-3" />
-            </button>
-          </div>
-          <div className="divide-y divide-neutral-100">
-            {RECENT_JOBS.map((job) => (
-              <div
-                key={job.id}
-                className="grid grid-cols-[1fr_auto] items-center gap-4 px-5 py-3 hover:bg-neutral-50 transition-colors cursor-pointer"
-              >
-                <div className="min-w-0">
-                  <div className="flex items-center gap-2 flex-wrap">
-                    <span className="text-sm font-semibold text-neutral-900">{job.title}</span>
-                    <StatusBadge status={job.status} />
+          ) : (
+            <div className="space-y-2.5">
+              {overBudget.map((j) => (
+                <div key={j.jobId} className="cursor-pointer group" onClick={() => navigate(`/reports/job/${j.jobId}`)}>
+                  <div className="flex items-center justify-between mb-1">
+                    <span className="text-xs font-medium text-neutral-700 group-hover:text-[#1B4F9C] truncate max-w-[60%]">{j.title}</span>
+                    <span className="text-xs font-bold text-red-600 tabular-nums">+{j.variancePct.toFixed(1)}%</span>
                   </div>
-                  <p className="text-xs text-neutral-400 mt-0.5">
-                    {job.id} · {job.client} · {job.date}
-                  </p>
-                </div>
-                <span className="text-sm font-bold text-neutral-800 tabular-nums">{job.value}</span>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Pending Approvals */}
-        <div className="lg:col-span-2 rounded-xl border border-neutral-200 bg-white shadow-sm flex flex-col">
-          <div className="flex items-center justify-between px-5 py-3.5 border-b border-neutral-100">
-            <h2 className="text-sm font-semibold text-neutral-900">Pending Approvals</h2>
-            <span className="inline-flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-[11px] font-bold text-white">
-              {PENDING_APPROVALS.length}
-            </span>
-          </div>
-          <div className="flex-1 divide-y divide-neutral-100">
-            {PENDING_APPROVALS.map((item) => (
-              <div key={item.id} className="flex items-start gap-3 px-5 py-3.5 hover:bg-neutral-50 transition-colors cursor-pointer">
-                <span
-                  className={`mt-1.5 h-2 w-2 shrink-0 rounded-full ${
-                    item.urgency === 'high' ? 'bg-red-500' :
-                    item.urgency === 'medium' ? 'bg-amber-400' : 'bg-emerald-400'
-                  }`}
-                />
-                <div className="min-w-0">
-                  <p className="text-sm font-semibold text-neutral-900">{item.title}</p>
-                  <p className="text-xs text-neutral-400 mt-0.5">{item.id}</p>
-                  <p className="text-xs text-neutral-500 mt-0.5">By {item.submittedBy} · {item.daysAgo}d ago</p>
-                </div>
-              </div>
-            ))}
-          </div>
-          <div className="px-5 py-3.5 border-t border-neutral-100">
-            <button className="w-full rounded-lg bg-[#1B4F9C] py-2 text-sm font-semibold text-white hover:bg-[#174287] transition-colors">
-              Review All Approvals
-            </button>
-          </div>
-        </div>
-
-      </div>
-
-      {/* Bottom row — Quick Actions + Activity */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-
-        {/* Quick Actions */}
-        <div className="rounded-xl border border-neutral-200 bg-white shadow-sm p-4">
-          <h2 className="text-sm font-semibold text-neutral-900 mb-3">Quick Actions</h2>
-          <div className="grid grid-cols-2 gap-2">
-            {[
-              { label: 'New Job Order', icon: Plus, color: 'text-blue-600', bg: 'bg-blue-50' },
-              { label: 'Submit for Approval', icon: Send, color: 'text-amber-600', bg: 'bg-amber-50' },
-              { label: 'View Reports', icon: BarChart2, color: 'text-emerald-600', bg: 'bg-emerald-50' },
-              { label: 'Manage Staff', icon: Users, color: 'text-violet-600', bg: 'bg-violet-50' },
-            ].map((action) => {
-              const Icon = action.icon;
-              return (
-                <button key={action.label} className="flex items-center gap-2.5 rounded-lg border border-neutral-100 p-3 text-left hover:bg-neutral-50 hover:border-neutral-200 transition-colors">
-                  <div className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-md ${action.bg}`}>
-                    <Icon className={`h-3.5 w-3.5 ${action.color}`} />
+                  <div className="h-1.5 rounded-full bg-neutral-100 overflow-hidden">
+                    <div className="h-full rounded-full bg-red-400 transition-all" style={{ width: `${Math.min(j.variancePct, 100)}%` }} />
                   </div>
-                  <span className="text-xs font-medium text-neutral-700 leading-tight">{action.label}</span>
-                </button>
-              );
-            })}
-          </div>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
 
-        {/* Recent Activity */}
-        <div className="lg:col-span-2 rounded-xl border border-neutral-200 bg-white shadow-sm overflow-hidden">
-          <div className="flex items-center justify-between px-5 py-3.5 border-b border-neutral-100">
-            <h2 className="text-sm font-semibold text-neutral-900">Recent Activity</h2>
-          </div>
-          <div className="divide-y divide-neutral-100">
-            {[
-              { user: 'Raj Kumar', action: 'submitted JO-2024-0081 for approval', time: '1h ago', color: 'bg-blue-500' },
-              { user: 'Meena Shah', action: 'updated cost estimate on JO-2024-0076', time: '3h ago', color: 'bg-amber-500' },
-              { user: 'Arjun Nair', action: 'marked JO-2024-0074 as In Progress', time: '5h ago', color: 'bg-emerald-500' },
-              { user: 'Admin User', action: 'approved JO-2024-0080 (Electrical Fittings)', time: '1d ago', color: 'bg-violet-500' },
-            ].map((item, i) => (
-              <div key={i} className="grid grid-cols-[auto_1fr_auto] items-start gap-3 px-5 py-3">
-                <div className={`mt-1.5 h-2 w-2 shrink-0 rounded-full ${item.color}`} />
-                <p className="text-sm text-neutral-800 min-w-0">
-                  <span className="font-semibold">{item.user}</span>{' '}
-                  <span className="text-neutral-500">{item.action}</span>
-                </p>
-                <span className="text-xs text-neutral-400 whitespace-nowrap">{item.time}</span>
+        {/* Revenue by Client donut */}
+        <div className="rounded-xl border border-neutral-200 bg-white shadow-sm p-5">
+          <p className="text-sm font-semibold text-neutral-800 mb-2">Revenue by Client</p>
+          {revenue.length === 0 ? (
+            <div className="flex items-center justify-center h-40 text-xs text-neutral-400">No invoice data</div>
+          ) : (
+            <>
+              <ResponsiveContainer width="100%" height={160}>
+                <PieChart>
+                  <Pie data={revenue} dataKey="value" nameKey="client" cx="50%" cy="50%" innerRadius={48} outerRadius={70}>
+                    {revenue.map((_, i) => <Cell key={i} fill={DONUT_COLORS[i % DONUT_COLORS.length]} />)}
+                  </Pie>
+                  <Tooltip formatter={(v: number | undefined) => formatCurrency(v ?? 0)} />
+                </PieChart>
+              </ResponsiveContainer>
+              <div className="mt-2 space-y-1">
+                {revenue.slice(0, 4).map((r, i) => (
+                  <div key={r.client} className="flex items-center justify-between text-xs">
+                    <div className="flex items-center gap-1.5"><span className="h-2 w-2 rounded-full shrink-0" style={{ background: DONUT_COLORS[i % DONUT_COLORS.length] }} /><span className="text-neutral-600 truncate max-w-[120px]">{r.client}</span></div>
+                    <span className="font-semibold text-neutral-800 tabular-nums">{formatCurrency(r.value)}</span>
+                  </div>
+                ))}
               </div>
-            ))}
-          </div>
+            </>
+          )}
         </div>
 
+        {/* Material vs Labor stacked bar */}
+        <div className="rounded-xl border border-neutral-200 bg-white shadow-sm p-5">
+          <p className="text-sm font-semibold text-neutral-800 mb-4">Material vs Labor Split</p>
+          <ResponsiveContainer width="100%" height={220}>
+            <BarChart data={costSplit} margin={{ top: 4, right: 4, left: 0, bottom: 0 }}>
+              <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+              <XAxis dataKey="month" tick={{ fontSize: 10 }} />
+              <YAxis tick={{ fontSize: 10 }} tickFormatter={(v) => `${(v/1000).toFixed(0)}k`} />
+              <Tooltip formatter={(v: number | undefined) => formatCurrency(v ?? 0)} />
+              <Legend wrapperStyle={{ fontSize: 10 }} />
+              <Bar dataKey="materials" name="Materials" stackId="a" fill="#6366f1" />
+              <Bar dataKey="labor" name="Labor" stackId="a" fill="#3b82f6" />
+              <Bar dataKey="overhead" name="Overhead" stackId="a" fill="#f59e0b" radius={[4, 4, 0, 0]} />
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
       </div>
     </div>
   );

@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import {
   Plus, Search, Download, ChevronUp, ChevronDown, ChevronsUpDown,
   Eye, Pencil, Copy, Trash2, MoreHorizontal, AlertTriangle, RefreshCw,
-  Briefcase, BarChart2,
+  Briefcase, BarChart2, Play,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { formatDate, formatCurrency } from '@/lib/utils';
@@ -400,6 +400,13 @@ export function JobOrdersPage() {
                         className="flex h-7 w-7 items-center justify-center rounded-md text-neutral-400 hover:bg-blue-50 hover:text-[#1B4F9C] transition-colors"
                       >
                         <BarChart2 className="h-3.5 w-3.5" />
+                      </button>
+                      <button
+                        onClick={() => navigate(`/job-orders/${job.id}/execution`)}
+                        title="Execute"
+                        className="flex h-7 w-7 items-center justify-center rounded-md text-neutral-400 hover:bg-emerald-50 hover:text-emerald-600 transition-colors"
+                      >
+                        <Play className="h-3.5 w-3.5" />
                       </button>
                       <button
                         onClick={() => openView(job)}

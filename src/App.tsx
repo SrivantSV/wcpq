@@ -9,7 +9,18 @@ import { DashboardPage } from '@/pages/DashboardPage';
 import { JobOrdersPage } from '@/pages/job-orders/JobOrdersPage';
 import { EstimationPage } from '@/pages/estimation/EstimationPage';
 import { ApprovalsPage } from '@/pages/approvals/ApprovalsPage';
-import { PlaceholderPage } from '@/pages/PlaceholderPage';
+import { ExecutionPage } from '@/pages/execution/ExecutionPage';
+import { InvoicesListPage } from '@/pages/finance/InvoicesListPage';
+import { InvoicePage } from '@/pages/finance/InvoicePage';
+import { ReportsPage } from '@/pages/reports/ReportsPage';
+import { JobCostingReport } from '@/pages/reports/JobCostingReport';
+import { JobsSummaryReport } from '@/pages/reports/JobsSummaryReport';
+import { VarianceReport } from '@/pages/reports/VarianceReport';
+import { ClientProfitabilityReport } from '@/pages/reports/ClientProfitabilityReport';
+import { MaterialConsumptionReport } from '@/pages/reports/MaterialConsumptionReport';
+import { LaborUtilizationReport } from '@/pages/reports/LaborUtilizationReport';
+import { OverheadAnalysisReport } from '@/pages/reports/OverheadAnalysisReport';
+import { InvoiceAgingReport } from '@/pages/reports/InvoiceAgingReport';
 
 import { SettingsLayout } from '@/pages/settings/SettingsLayout';
 import { CompanyPage } from '@/pages/settings/CompanyPage';
@@ -56,9 +67,18 @@ function App() {
             <Route path="job-orders" element={<JobOrdersPage />} />
             <Route path="job-orders/:jobId/estimation" element={<EstimationPage />} />
             <Route path="approvals" element={<ApprovalsPage />} />
-            <Route path="execution" element={<PlaceholderPage title="Execution" description="Track site execution, progress updates, and BOQ actuals." />} />
-            <Route path="finance" element={<PlaceholderPage title="Finance & Invoices" description="Generate invoices, record payments, and track receivables." />} />
-            <Route path="reports" element={<PlaceholderPage title="Reports" description="Cost variance, revenue, and performance analytics." />} />
+            <Route path="job-orders/:jobId/execution" element={<ExecutionPage />} />
+            <Route path="finance" element={<InvoicesListPage />} />
+            <Route path="finance/invoice/:jobId" element={<InvoicePage />} />
+            <Route path="reports" element={<ReportsPage />} />
+            <Route path="reports/job/:jobId" element={<JobCostingReport />} />
+            <Route path="reports/jobs-summary" element={<JobsSummaryReport />} />
+            <Route path="reports/variance" element={<VarianceReport />} />
+            <Route path="reports/client-profitability" element={<ClientProfitabilityReport />} />
+            <Route path="reports/material-consumption" element={<MaterialConsumptionReport />} />
+            <Route path="reports/labor-utilization" element={<LaborUtilizationReport />} />
+            <Route path="reports/overhead-analysis" element={<OverheadAnalysisReport />} />
+            <Route path="reports/invoice-aging" element={<InvoiceAgingReport />} />
 
             {/* Settings */}
             <Route path="settings" element={<SettingsLayout />}>

@@ -324,6 +324,139 @@ export interface Estimate {
   createdAt: string;
 }
 
+// ─── Execution Tracking ───────────────────────────────────────────────────────
+
+export interface MaterialIssuance {
+  id: string;
+  materialId: string;
+  description: string;
+  unit: string;
+  estimatedQty: number;
+  issuedQty: number;
+  issueDate: string;
+  issuedBy: string;
+  vendorRef?: string;
+  referenceNo?: string;
+}
+
+export interface LaborLog {
+  id: string;
+  laborId: string;
+  taskDescription: string;
+  estimatedHours: number;
+  loggedHours: number;
+  dateWorked: string;
+  worker: string;
+  workDescription?: string;
+  referenceNo?: string;
+}
+
+export interface OverheadActual {
+  id: string;
+  overheadId: string;
+  description: string;
+  estimatedAmount: number;
+  actualAmount: number;
+  date: string;
+  referenceNotes?: string;
+}
+
+export type ExecutionStatus = 'not_started' | 'in_progress' | 'completed' | 'on_hold';
+
+export interface RevisionRequest {
+  id: string;
+  reason: string;
+  requestedBy: string;
+  requestedAt: string;
+  status: 'pending' | 'actioned';
+}
+
+export interface ExecutionRecord {
+  id: string;
+  jobOrderId: string;
+  jobNumber: string;
+  estimateId: string;
+  status: ExecutionStatus;
+  materialIssuances: MaterialIssuance[];
+  laborLogs: LaborLog[];
+  overheadActuals: OverheadActual[];
+  revisionRequests: RevisionRequest[];
+  completedAt?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+// ─── Invoice ──────────────────────────────────────────────────────────────────
+
+export type InvoiceStatus = 'draft' | 'issued' | 'partially_paid' | 'paid' | 'overdue' | 'voided';
+export type PaymentTerms = 'net_7' | 'net_15' | 'net_30' | 'net_45' | 'net_60' | 'custom';
+export type TaxType = 'gst' | 'igst' | 'service_tax' | 'vat' | 'none' | 'custom';
+export type InvoiceLineMode = 'summary' | 'itemized' | 'custom';
+
+export interface InvoiceLineItem {
+  id: string;
+  description: string;
+  amount: number;
+}
+
+export interface InvoiceTaxConfig {
+  type: TaxType;
+  cgstPct?: number;
+  sgstPct?: number;
+  igstPct?: number;
+  customPct?: number;
+  additionalLevyPct?: number;
+  additionalLevyLabel?: string;
+}
+
+export interface PaymentRecord {
+  id: string;
+  amount: number;
+  paidOn: string;
+  method: string;
+  referenceNo?: string;
+  notes?: string;
+}
+
+export interface Invoice {
+  id: string;
+  invoiceNumber: string;
+  jobOrderId: string;
+  jobNumber: string;
+  estimateId: string;
+  status: InvoiceStatus;
+  invoiceDate: string;
+  dueDate: string;
+  paymentTerms: PaymentTerms;
+  customPaymentDays?: number;
+  billTo: string;
+  billToAddress?: string;
+  billToGstin?: string;
+  referencePoNumber?: string;
+  currency: string;
+  lineMode: InvoiceLineMode;
+  lineItems: InvoiceLineItem[];
+  subTotal: number;
+  taxConfig: InvoiceTaxConfig;
+  cgstAmount: number;
+  sgstAmount: number;
+  igstAmount: number;
+  additionalLevyAmount: number;
+  taxTotal: number;
+  invoiceTotal: number;
+  paymentInstructions?: string;
+  invoiceNotes?: string;
+  termsAndConditions?: string;
+  payments: PaymentRecord[];
+  amountPaid: number;
+  amountDue: number;
+  voidReason?: string;
+  creditNoteNumber?: string;
+  createdBy: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
 export interface Permission {
   resource: string;
   actions: ('create' | 'read' | 'update' | 'delete' | 'approve')[];
