@@ -39,25 +39,25 @@ export function Sidebar() {
   return (
     <aside
       className={cn(
-        'hidden lg:flex flex-col h-full bg-[#1B4F9C] text-white transition-all duration-200 ease-in-out relative',
-        sidebarCollapsed ? 'w-16' : 'w-60'
+        'hidden lg:flex flex-col h-full bg-[#1B4F9C] text-white transition-all duration-200 ease-in-out relative shrink-0',
+        sidebarCollapsed ? 'w-[64px]' : 'w-[220px]'
       )}
     >
       {/* Logo */}
-      <div className={cn('flex items-center gap-3 px-4 py-4 border-b border-white/10', sidebarCollapsed && 'justify-center px-2')}>
-        <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-white/20">
+      <div className={cn('flex items-center gap-3 px-4 py-[18px] border-b border-white/10', sidebarCollapsed && 'justify-center px-0')}>
+        <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-white/20">
           <Building2 className="h-5 w-5 text-white" />
         </div>
         {!sidebarCollapsed && (
           <div className="min-w-0">
-            <p className="font-bold text-sm leading-tight truncate">CQMR</p>
-            <p className="text-xs text-white/60 truncate">Cost & Quote Mgmt</p>
+            <p className="font-extrabold text-[15px] leading-tight tracking-tight">CQMR</p>
+            <p className="text-[11px] text-white/60 truncate mt-0.5">Cost & Quote Mgmt</p>
           </div>
         )}
       </div>
 
       {/* Navigation */}
-      <nav className="flex-1 overflow-y-auto py-3 space-y-0.5 px-2">
+      <nav className="flex-1 overflow-y-auto py-2 space-y-0.5 px-2">
         {NAV_ITEMS.map((item) => {
           const Icon = item.icon;
           const isActive =
@@ -69,27 +69,27 @@ export function Sidebar() {
               key={item.path}
               to={item.path}
               className={cn(
-                'flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors relative',
+                'flex items-center gap-2.5 rounded-lg px-3 py-2.5 text-[13px] font-medium transition-all duration-100 relative',
                 isActive
-                  ? 'bg-white/20 text-white'
+                  ? 'bg-white/20 text-white shadow-sm'
                   : 'text-white/70 hover:bg-white/10 hover:text-white',
-                sidebarCollapsed && 'justify-center px-2'
+                sidebarCollapsed && 'justify-center px-0'
               )}
               title={sidebarCollapsed ? item.label : undefined}
             >
-              <Icon className="h-5 w-5 shrink-0" />
+              <Icon className="h-[18px] w-[18px] shrink-0" />
               {!sidebarCollapsed && (
                 <>
                   <span className="flex-1 truncate">{item.label}</span>
                   {item.badge && (
-                    <span className="inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-red-500 px-1.5 text-xs font-semibold">
+                    <span className="inline-flex h-5 min-w-[20px] items-center justify-center rounded-full bg-red-500 px-1.5 text-[11px] font-bold">
                       {item.badge}
                     </span>
                   )}
                 </>
               )}
               {sidebarCollapsed && item.badge && (
-                <span className="absolute -top-1 -right-1 h-4 w-4 rounded-full bg-red-500 text-xs flex items-center justify-center font-semibold">
+                <span className="absolute -top-1 -right-1 h-4 w-4 rounded-full bg-red-500 text-[10px] flex items-center justify-center font-bold">
                   {item.badge}
                 </span>
               )}
@@ -101,21 +101,21 @@ export function Sidebar() {
       {/* User footer */}
       <div className={cn('border-t border-white/10 p-2', sidebarCollapsed && 'px-1')}>
         {!sidebarCollapsed && user && (
-          <div className="mb-2 flex items-center gap-2 rounded-lg px-2 py-2">
-            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-white/20 text-xs font-bold text-white">
+          <div className="mb-1 flex items-center gap-2.5 rounded-lg px-2 py-2.5">
+            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-white/25 text-xs font-bold text-white">
               {user.name.charAt(0).toUpperCase()}
             </div>
             <div className="min-w-0 flex-1">
-              <p className="text-sm font-medium text-white truncate">{user.name}</p>
-              <p className="text-xs text-white/60 capitalize truncate">{user.role}</p>
+              <p className="text-[13px] font-semibold text-white truncate leading-tight">{user.name}</p>
+              <p className="text-[11px] text-white/60 capitalize truncate mt-0.5">{user.role}</p>
             </div>
           </div>
         )}
         <button
           onClick={logout}
           className={cn(
-            'flex w-full items-center gap-2 rounded-lg px-3 py-2 text-sm text-white/70 hover:bg-white/10 hover:text-white transition-colors',
-            sidebarCollapsed && 'justify-center px-2'
+            'flex w-full items-center gap-2 rounded-lg px-3 py-2 text-[13px] text-white/60 hover:bg-white/10 hover:text-white transition-colors',
+            sidebarCollapsed && 'justify-center px-0'
           )}
           title={sidebarCollapsed ? 'Logout' : undefined}
         >
