@@ -1,8 +1,9 @@
 import { useState, useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
   Plus, Search, Download, ChevronUp, ChevronDown, ChevronsUpDown,
   Eye, Pencil, Copy, Trash2, MoreHorizontal, AlertTriangle, RefreshCw,
-  Briefcase,
+  Briefcase, BarChart2,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { formatDate, formatCurrency } from '@/lib/utils';
@@ -115,6 +116,7 @@ function MobileJobCard({
 
 export function JobOrdersPage() {
   const { jobs, deleteJob, duplicateJob } = useJobOrderStore();
+  const navigate = useNavigate();
 
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState<JobOrderStatus | 'all'>('all');
@@ -392,6 +394,13 @@ export function JobOrdersPage() {
                   </td>
                   <td className="px-4 py-3.5" onClick={(e) => e.stopPropagation()}>
                     <div className="flex items-center justify-end gap-1">
+                      <button
+                        onClick={() => navigate(`/job-orders/${job.id}/estimation`)}
+                        title="Estimate"
+                        className="flex h-7 w-7 items-center justify-center rounded-md text-neutral-400 hover:bg-blue-50 hover:text-[#1B4F9C] transition-colors"
+                      >
+                        <BarChart2 className="h-3.5 w-3.5" />
+                      </button>
                       <button
                         onClick={() => openView(job)}
                         title="View"

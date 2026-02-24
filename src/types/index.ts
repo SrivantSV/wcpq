@@ -222,6 +222,108 @@ export interface JobOrder {
   updatedAt: string;
 }
 
+export type EstimationStatus =
+  | 'draft'
+  | 'under_review'
+  | 'internally_approved'
+  | 'returned_for_revision'
+  | 'awaiting_client'
+  | 'client_approved'
+  | 'rejected';
+
+export type MaterialSource = 'from_stock' | 'external_purchase';
+export type LaborSource = 'own_staff' | 'subcontractor';
+export type OverheadBasis = 'percent_labor' | 'percent_materials' | 'fixed_amount' | 'per_machine_hour';
+
+export interface MaterialLineItem {
+  id: string;
+  description: string;
+  source: MaterialSource;
+  supplierTag?: string;
+  unit: string;
+  estimatedQty: number;
+  unitCost: number;
+  totalCost: number;
+  notes?: string;
+}
+
+export interface LaborLineItem {
+  id: string;
+  taskDescription: string;
+  laborSource: LaborSource;
+  supplierTag?: string;
+  workerRole?: string;
+  estimatedHours: number;
+  hourlyRate: number;
+  totalCost: number;
+  notes?: string;
+}
+
+export interface OverheadLineItem {
+  id: string;
+  description: string;
+  basis: OverheadBasis;
+  rateValue: number;
+  calculatedTotal: number;
+  notes?: string;
+}
+
+export interface ApprovalRecord {
+  id: string;
+  action: 'submitted' | 'approved' | 'rejected' | 'revised';
+  performedBy: string;
+  performedByRole: string;
+  timestamp: string;
+  notes?: string;
+}
+
+export interface RevisionHistory {
+  revisionNumber: number;
+  createdAt: string;
+  createdBy: string;
+  materials: MaterialLineItem[];
+  labor: LaborLineItem[];
+  overhead: OverheadLineItem[];
+  profitMarginPct: number;
+  grandTotal: number;
+  changeNote?: string;
+}
+
+export interface ClientApprovalRecord {
+  approvedOn: string;
+  approvalMethod: 'email' | 'whatsapp' | 'signed_copy' | 'verbal';
+  referenceNotes?: string;
+  proofFileName?: string;
+  recordedBy: string;
+}
+
+export interface Estimate {
+  id: string;
+  jobOrderId: string;
+  jobNumber: string;
+  status: EstimationStatus;
+  revisionNumber: number;
+  assignedEstimator: string;
+  materials: MaterialLineItem[];
+  labor: LaborLineItem[];
+  overhead: OverheadLineItem[];
+  profitMarginPct: number;
+  materialsTotal: number;
+  laborTotal: number;
+  overheadTotal: number;
+  subTotal: number;
+  profitAmount: number;
+  grandTotal: number;
+  effectiveMarginPct: number;
+  approvalTrail: ApprovalRecord[];
+  revisionHistory: RevisionHistory[];
+  clientApproval?: ClientApprovalRecord;
+  returnedNotes?: string;
+  lastModifiedAt: string;
+  lastModifiedBy: string;
+  createdAt: string;
+}
+
 export interface Permission {
   resource: string;
   actions: ('create' | 'read' | 'update' | 'delete' | 'approve')[];
