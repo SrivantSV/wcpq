@@ -10,6 +10,7 @@ import { LaborSection } from './LaborSection';
 import { OverheadSection } from './OverheadSection';
 import { EstimationSummaryPanel } from './EstimationSummaryPanel';
 import type { MaterialLineItem, LaborLineItem, OverheadLineItem } from '@/types';
+import { ClientApprovalPanel } from './ClientApprovalPanel';
 
 const LOCKED_STATUSES = ['under_review', 'awaiting_client', 'client_approved', 'internally_approved'];
 const ACTOR = 'Admin User';
@@ -19,7 +20,7 @@ export function EstimationPage() {
   const { jobId } = useParams<{ jobId: string }>();
   const navigate = useNavigate();
   const { jobs } = useJobOrderStore();
-  const { getByJobId, createEstimate, updateMaterials, updateLabor, updateOverhead, updateMargin, saveEstimate, submitForApproval, resubmitRevision } = useEstimationStore();
+  const { getByJobId, createEstimate, updateMaterials, updateLabor, updateOverhead, updateMargin, saveEstimate, submitForApproval, resubmitRevision, recordClientApproval } = useEstimationStore();
 
   const job = jobs.find((j) => j.id === jobId);
   const estimate = getByJobId(jobId ?? '');
@@ -175,6 +176,17 @@ export function EstimationPage() {
           onRevisionHistory={() => setRevisionDrawerOpen(true)}
         />
       </div>
+
+      {/* Client Approval Panel */}
+      {estimate.status === 'awaiting_client' && (
+        <div className="mt-4">
+          <ClientApprovalPanel
+            estimateId={estimate.id}
+            existingApproval={estimate.clientApproval}
+            onRecord={recordClientApproval}
+          />
+        </div>
+      )}
 
       {/* Submit confirm modal (revision resubmit) */}
       {submitConfirmOpen && (
